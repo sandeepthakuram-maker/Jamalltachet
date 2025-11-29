@@ -1,71 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Jamallta Chat — index.html (Realtime Ready)</title>
-<style>
-  body { margin:0; padding:20px; font-family:Arial; background:#f2f2f2; }
-  h2{ margin-top:0; }
-  .box{ background:#fff; padding:15px; border-radius:12px; height:320px; overflow:auto; }
-  .row{ display:flex; gap:20px; }
-  .msg-user{ text-align:right; margin:8px 0; }
-  .msg-assistant{ text-align:left; margin:8px 0; }
-  input{ width:80%; padding:10px; border-radius:6px; border:1px solid #aaa; }
-  button{ padding:10px 20px; border:none; background:#000; color:#fff; border-radius:6px; }
-</style>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-</head>
-<body>
-<h2>Jamallta Chat — Full Realtime index.html</h2>
-<p>Left = Chat, Right = Live View (auto update)</p>
-
-<div class="row">
-  <!-- Chat Window -->
-  <div style="flex:1;">
-    <h3>Chat</h3>
-    <div id="chat" class="box"></div>
-    <br>
-    <input id="inp" placeholder="Type message..."/>
-    <button onclick="sendMsg()">Send</button>
-  </div>
-
-  <!-- Live Window -->
-  <div style="flex:1;">
-    <h3>Live View</h3>
-    <div id="live" class="box"></div>
-  </div>
-</div>
-
-<script>
-// IMPORTANT: Change this to your backend
-const BACKEND_URL = "http://localhost:3001";  // ← edit this when deployed
-const socket = io(BACKEND_URL);
-
-// join global room
-socket.emit("join", "global");
-
-// on new message
-socket.on("message", (m)=>{
-  const chat = document.getElementById("chat");
-  const live = document.getElementById("live");
-
-  const tag = `<div class='msg-${m.role}'>${m.role}: ${m.text}</div>`;
-
-  chat.innerHTML += tag;
-  live.innerHTML += tag;
-
-  chat.scrollTop = chat.scrollHeight;
-  live.scrollTop = live.scrollHeight;
-});
-
-function sendMsg(){
-  const x = document.getElementById("inp");
-  const text = x.value.trim();
-  if(!text) return;
-  socket.emit("user_message", { room:"global", text });
-  x.value = "";
-}
-</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Live Site Builder</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Vite will inject scripts -->
+  </body>
 </html>
