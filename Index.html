@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jamallta Chat — One File Realtime</title>
+<style>
+  body { font-family: sans-serif; background:#f5f5f5; margin:0; padding:20px; }
+  #chat, #live { background:white; padding:15px; border-radius:12px; height:300px; overflow:auto; margin-bottom:20px; }
+  .msg-user{ text-align:right; margin:6px 0; }
+  .msg-bot{ text-align:left; margin:6px 0; }
+  input{ width:80%; padding:10px; }
+  button{ padding:10px 20px; }
+</style>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+<h2>Jamallta Chat (Left) + Live View (Right)</h2>
+<div style="display:flex; gap:20px;">
+  <div style="flex:1;">
+    <h3>Chat Window</h3>
+    <div id="chat"></div>
+    <input id="input" placeholder="Type..." />
+    <button onclick="sendMsg()">Send</button>
+  </div>
+
+  <div style="flex:1;">
+    <h3>Live View (auto-updating)</h3>
+    <div id="live"></div>
+  </div>
+</div>
+
+<script>
+// CHANGE THIS TO YOUR DEPLOYED SERVER URL
+const BACKEND_URL = "http://localhost:3001";
+const socket = io(BACKEND_URL);
+
+socket.emit("join", "global");
+
+socket.on("message", (m)=>{
+  const box1 = document.getElementById("chat");
+  const box2 = document.getElementById("live");
+
+  const tag = `<div class='msg-${m.role}'>${m.role}: ${m.text}</div>`;
+  box1.innerHTML += tag;
+  box2.innerHTML += tag;
+
+  box1.scrollTop = box1.scrollHeight;
+  box2.scrollTop = box2.scrollHeight;
+});
+
+function sendMsg(){
+  const inp = document.getElementById("input");
+  const text = inp.value.trim();
+  if(!text) return;
+  socket.emit("user_message", { room:"global", text });
+  inp.value = "";
+}
+</script>
+</body>
+</html>
