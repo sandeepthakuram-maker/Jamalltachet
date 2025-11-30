@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        #send-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        #send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 95%;
+                height: 90vh;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🤖 AI Chat Assistant</h1>
+            <p>मैं आपकी कैसे मदद कर सकता हूँ?</p>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+                नमस्ते! मैं आपका AI असिस्टेंट हूँ। आप मुझसे कुछ भी पूछ सकते हैं! 😊
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            AI टाइपिंग...
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" id="chat-input" placeholder="अपना संदेश यहाँ टाइप करें...">
+            <button id="send-btn">भेजें</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // AI Responses Database (Hindi/English)
+        const aiResponses = {
+            'hello': 'नमस्ते! आपका दिन कैसा चल रहा है?',
+            'hi': 'हाय! मैं आपकी क्या मदद कर सकता हूँ?',
+            'how are you': 'मैं बढ़िया हूँ, धन्यवाद! आप कैसे हैं?',
+            'what is your name': 'मैं एक AI चैटबॉट हूँ जो आपकी मदद के लिए बनाया गया है!',
+            'help': 'मैं आपकी निम्नलिखित चीजों में मदद कर सकता हूँ: प्रश्न पूछना, जानकारी देना, बातचीत करना।',
+            'thanks': 'आपका स्वागत है! कोई और मदद चाहिए?',
+            'bye': 'अलविदा! आपसे बात करके अच्छा लगा! 👋',
+            'क्या हाल है': 'सब बढ़िया! आप कैसे हैं?',
+            'मदद': 'जरूर! मैं आपकी किस तरह मदद कर सकता हूँ?',
+            'धन्यवाद': 'खुशी हुई मदद करके! 😊'
+        };
+
+        // Send Message Function
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            
+            if (message === '') return;
+
+            // Add user message
+            addMessage(message, 'user');
+            chatInput.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Simulate AI response after delay
+            setTimeout(() => {
+                hideTypingIndicator();
+                const aiResponse = generateAIResponse(message);
+                addMessage(aiResponse, 'bot');
+            }, 1000 + Math.random() * 2000);
+        }
+
+        // Add message to chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // Generate AI Response
+        function generateAIResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            // Check for exact matches
+            for (const [key, response] of Object.entries(aiResponses)) {
+                if (lowerMessage.includes(key.toLowerCase())) {
+                    return response;
+                }
+            }
+
+            // Default responses based on keywords
+            if (lowerMessage.includes('weather') || lowerMessage.includes('मौसम')) {
+                return 'मैं वर्तमान में मौसम की जानकारी प्रदान नहीं कर सकता। बाद में कोशिश करें!';
+            }
+            else if (lowerMessage.includes('time') || lowerMessage.includes('समय')) {
+                return `वर्तमान समय: ${new Date().toLocaleTimeString('hi-IN')}`;
+            }
+            else if (lowerMessage.includes('joke') || lowerMessage.includes('चुटकुला')) {
+                const jokes = [
+                    'कंप्यूटर: मैं इंसानों जितना स्मार्ट हूँ?\nइंसान: हाँ, तुम भी Windows update के बाद restart होते हो!',
+                    'टीचर: बताओ, 2 और 2 कितने होते हैं?\nस्टूडेंट: 4\nटीचर: गुड!\nस्टूडेंट: गुड? ये तो एक्सीलेंट है!'
+                ];
+                return jokes[Math.floor(Math.random() * jokes.length)];
+            }
+            else {
+                const defaultResponses = [
+                    'यह एक दिलचस्प सवाल है! मैं अभी इसका जवाब देने के लिए प्रोग्राम नहीं किया गया हूँ।',
+                    'माफ कीजिए, मैं इस प्रश्न का उत्तर नहीं दे सकता। क्या आप कुछ और पूछना चाहेंगे?',
+                    'मैं अभी इसके बारे में जानकारी नहीं दे सकता। कोई अन्य प्रश्न?',
+                    'यह मेरी वर्तमान क्षमताओं से परे है।'
+                ];
+                return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+            }
+        }
+
+        // Typing indicator functions
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'block';
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+
+        // Scroll to bottom of chat
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Event Listeners
+        sendBtn.addEventListener('click', sendMessage);
+        
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initial greeting
+        setTimeout(() => {
+            addMessage('मैं आपके प्रश्नों का उत्तर देने और आपकी मदद करने के लिए यहाँ हूँ!', 'bot');
+        }, 1000);
+    </script>
+</body>
+</html>
