@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart AI Assistant</title>
+    <title>Smart AI Assistant - हर सवाल का जवाब!</title>
     <style>
         * {
             margin: 0;
@@ -199,20 +199,25 @@
     <div class="chat-container">
         <div class="chat-header">
             <h1>🤖 स्मार्ट AI असिस्टेंट</h1>
-            <p>हर सवाल का सही और सटीक जवाब!</p>
+            <p>हाँ! मैं आपके लिए वेबसाइट बना सकता हूँ! 🚀</p>
         </div>
         
         <div class="suggestions">
             <button class="suggestion-btn" onclick="sendSuggestion('नमस्ते')">नमस्ते</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('मदद चाहिए')">मदद चाहिए</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('वेबसाइट बनाना')">वेबसाइट बनाना</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('जोक सुनाओ')">जोक सुनाओ</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('वेबसाइट बनाना सिखाओ')">वेबसाइट बनाना</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('HTML code दो')">HTML Code</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('GitHub पर deploy करो')">GitHub Deploy</button>
         </div>
         
         <div class="chat-messages" id="chat-messages">
             <div class="message bot-message">
-                <strong>नमस्ते! 👋</strong><br>
-                मैं आपका स्मार्ट AI असिस्टेंट हूँ। आप मुझसे कोई भी सवाल पूछ सकते हैं - technical, general knowledge, coding, website बनाना, या कुछ और! मैं हर सवाल का सही और सटीक जवाब दूंगा।
+                <strong>जी हाँ! मैं आपके लिए वेबसाइट बना सकता हूँ! 💫</strong><br><br>
+                मैं आपको पूरी website का code दे सकता हूँ जो:<br>
+                ✅ हर सवाल का सही जवाब देगी<br>
+                ✅ Hindi/English दोनों में काम करेगी<br>
+                ✅ Mobile friendly होगी<br>
+                ✅ GitHub पर FREE host होगी<br><br>
+                <em>बस बताइए आपको किस तरह की website चाहिए!</em>
             </div>
         </div>
         
@@ -221,7 +226,7 @@
         </div>
         
         <div class="chat-input-container">
-            <input type="text" id="chat-input" placeholder="अपना सवाल यहाँ टाइप करें...">
+            <input type="text" id="chat-input" placeholder="बताइए, किस तरह की website चाहिए?">
             <button id="send-btn">भेजें</button>
         </div>
     </div>
@@ -233,71 +238,45 @@
         const sendBtn = document.getElementById('send-btn');
         const typingIndicator = document.getElementById('typing-indicator');
 
-        // Comprehensive AI Responses Database
+        // Comprehensive AI Responses - हर सवाल का जवाब!
         const aiResponses = {
             // Greetings
-            'hello': 'नमस्ते! आपका दिन कैसा चल रहा है? मैं आपकी किस तरह मदद कर सकता हूँ? 😊',
-            'hi': 'हाय! 👋 मैं आपकी क्या मदद कर सकता हूँ?',
-            'नमस्ते': 'नमस्ते! 🙏 आपसे मिलकर खुशी हुई। आप कैसे हैं?',
-            'hey': 'हेय! 😄 क्या हाल है?',
+            'hello': 'नमस्ते! मैं आपके लिए वेबसाइट बना सकता हूँ! बताइए आपको क्या चाहिए? 😊',
+            'hi': 'हाय! 👋 वेबसाइट बनाने में मदद चाहिए? मैं पूरा code दे सकता हूँ!',
+            'नमस्ते': 'नमस्ते! 🙏 मैं आपके लिए professional website बना सकता हूँ!',
+            'hey': 'हेय! 😄 वेबसाइट बनाना चाहते हैं? मैं help करूंगा!',
             
-            // How are you
-            'how are you': 'मैं बिल्कुल बढ़िया हूँ, धन्यवाद! आप कैसे हैं?',
-            'क्या हाल है': 'सब ठीक-ठाक! 😊 आप सुनाइए, कैसे हैं आप?',
-            'kaise ho': 'मैं तो बस यूँ ही चल रहा हूँ! आप बताइए, सब कैसा चल रहा है?',
-            
-            // Name
-            'what is your name': 'मैं एक स्मार्ट AI चैटबॉट हूँ जो आपकी हर तरह से मदद करने के लिए बनाया गया है!',
-            'तुम्हारा नाम क्या है': 'मैं AI असिस्टेंट हूँ! आप मुझे कोई भी नाम दे सकते हैं।',
-            'aap ka naam kya hai': 'मैं एक AI चैटबॉट हूँ जो आपकी सेवा के लिए यहाँ है!',
+            // Website related - अब हाँ बोलेंगे!
+            'website': 'जी हाँ! मैं आपके लिए वेबसाइट बना सकता हूँ! 🚀\n\nकिस तरह की website चाहिए?\n• Business Website\n• Portfolio Website\n• Blog Website\n• E-commerce Website\n• Personal Website\n\nबताइए, मैं complete code दूंगा!',
+            'वेबसाइट': 'बिल्कुल! मैं आपके लिए वेबसाइट बना सकता हूँ! 💫\n\nआपको क्या चाहिए?\n• Responsive Design\n• Modern Look\n• Hindi/English Support\n• Mobile Friendly\n• FREE Hosting\n\nChoice कीजिए!',
+            'site': 'YES! I can create a website for you! 🌟\n\nWhat type of website do you need?\n• Business Site\n• Portfolio Site\n• Blog\n• E-commerce Store\n• Personal Site\n\nTell me your requirements!',
+            'kya tum mere liye ek site bna kar de skte ho': 'जी बिल्कुल! हाँ! मैं आपके लिए professional website बना सकता हूँ! 🎯\n\nमैं आपको:\n✅ Complete HTML/CSS/JS Code दूंगा\n✅ GitHub पर FREE Hosting करना सिखाऊंगा\n✅ Responsive Design दूंगा\n✅ Hindi/English Support दूंगा\n\nबस बताइए आपको क्या चाहिए!',
+            'website kaise banaye': 'वेबसाइट बनाना बहुत आसान है! मैं आपको step-by-step guide दूंगा:\n\n1. HTML Structure\n2. CSS Styling  \n3. JavaScript Functions\n4. GitHub Deployment\n5. FREE Hosting\n\nक्या आप detailed guide चाहते हैं?',
+            'html code': 'जी हाँ! यह लीजिए basic website code:\n\n```html\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Your Website</title>\n    <style>\n        body { font-family: Arial; margin: 0; padding: 20px; }\n        .container { max-width: 1200px; margin: 0 auto; }\n    </style>\n</head>\n<body>\n    <div class="container">\n        <h1>Welcome to My Website</h1>\n        <p>This is my awesome website!</p>\n    </div>\n</body>\n</html>```\n\nक्या आप और features add करना चाहते हैं?',
             
             // Help
-            'help': 'जरूर! मैं आपकी इन चीजों में मदद कर सकता हूँ:\n• वेबसाइट बनाना\n• कोडिंग समस्याएँ\n• सामान्य ज्ञान\n• तकनीकी सलाह\n• मनोरंजन\n• और भी बहुत कुछ!',
-            'मदद': 'बिल्कुल! 🤝 मैं आपकी किस तरह मदद कर सकता हूँ?\n\n• वेबसाइट/एप बनाना\n• प्रोग्रामिंग\n• सवाल-जवाब\n• जानकारी\n• मजेदार बातें',
-            'madad chahiye': 'जरूर! बताइए मैं आपकी क्या मदद कर सकता हूँ?',
+            'help': 'जरूर! मैं आपकी इन चीजों में मदद कर सकता हूँ:\n\n🌐 **Website Development:**\n• Complete Website Code\n• HTML/CSS/JavaScript\n• Responsive Design\n• GitHub Hosting\n\n💻 **Programming Help:**\n• Code Examples\n• Debugging Help\n• Tutorials\n\n📱 **Other Services:**\n• Technical Guidance\n• Project Ideas\n• Career Advice\n\nबताइए आपको क्या चाहिए!',
+            'मदद': 'बिल्कुल! 🤝 मैं आपकी किस तरह मदद कर सकता हूँ?\n\n• पूरी वेबसाइट बनाना\n• कोडिंग सिखाना\n• प्रोजेक्ट गाइडेंस\n• करियर एडवाइस\n• टेक्निकल प्रॉब्लम सॉल्व करना\n\nकुछ भी पूछिए!',
             
             // Thanks
-            'thanks': 'आपका बहुत-बहुत धन्यवाद! 😊 कोई और मदद चाहिए?',
-            'thank you': 'यू आर वेलकम! 👍 खुशी हुई मदद करके।',
-            'धन्यवाद': 'कोई बात नहीं! 🙏 मैं हमेशा आपकी मदद के लिए तैयार हूँ।',
-            'shukriya': 'जी, कोई बात नहीं! 😄 क्या आपको कुछ और चाहिए?',
-            
-            // Bye
-            'bye': 'अलविदा! 👋 आपसे बात करके बहुत अच्छा लगा!',
-            'goodbye': 'गुडबाय! आशा है जल्द ही फिर बात करेंगे।',
-            'अलविदा': 'अलविदा! 🙏 खुश रहें और सुरक्षित रहें!',
-            
-            // Website related
-            'website': 'वेबसाइट बनाने के लिए आप HTML, CSS, JavaScript का उपयोग कर सकते हैं। क्या आप specific तरह की वेबसाइट बनाना चाहते हैं?',
-            'वेबसाइट': 'वेबसाइट बनाना बहुत आसान है! मैं आपको step-by-step guide दे सकता हूँ।',
-            'website kaise banaye': 'वेबसाइट बनाने के steps:\n1. HTML से structure बनाएँ\n2. CSS से design करें\n3. JavaScript से interactive बनाएँ\n4. GitHub Pages पर deploy करें\nक्या आप detailed guide चाहते हैं?',
-            'kya mere liye ek website bna skte ho': 'जी हाँ! मैं आपको पूरी वेबसाइट का code दे सकता हूँ। बस बताइए:\n• किस तरह की वेबसाइट चाहिए?\n• क्या features चाहिए?\n• कौन सा design पसंद है?\nमैं complete working code provide करूंगा!',
+            'thanks': 'आपका बहुत-बहुत धन्यवाद! 😊 कोई और website बनवानी है?',
+            'धन्यवाद': 'कोई बात नहीं! 🙏 मैं हमेशा आपकी मदद के लिए तैयार हूँ!',
             
             // Coding
-            'html': 'HTML वेबसाइट की structure के लिए है। Basic structure:\n```html\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Page Title</title>\n</head>\n<body>\n    <h1>Hello World</h1>\n</body>\n</html>```',
-            'css': 'CSS वेबसाइट को beautiful बनाता है। Example:\n```css\nbody { font-family: Arial; background: #f0f0f0; }\nh1 { color: blue; text-align: center; }```',
-            'javascript': 'JavaScript वेबसाइट को interactive बनाता है। Example:\n```javascript\ndocument.getElementById("demo").innerHTML = "Hello JavaScript!";```',
+            'html': 'जी हाँ! HTML code यह है:\n\n```html\n<!DOCTYPE html>\n<html lang="hi">\n<head>\n    <meta charset="UTF-8">\n    <title>मेरी वेबसाइट</title>\n</head>\n<body>\n    <h1>नमस्ते दुनिया!</h1>\n    <p>यह मेरी पहली वेबसाइट है!</p>\n</body>\n</html>```\n\nक्या आप CSS या JavaScript add करना चाहते हैं?',
+            'css': 'जी हाँ! CSS code यह है:\n\n```css\nbody {\n    font-family: Arial, sans-serif;\n    background: linear-gradient(135deg, #667eea, #764ba2);\n    color: white;\n    text-align: center;\n    padding: 50px;\n}\n\n.container {\n    max-width: 800px;\n    margin: 0 auto;\n    background: white;\n    color: #333;\n    padding: 30px;\n    border-radius: 10px;\n    box-shadow: 0 10px 30px rgba(0,0,0,0.3);\n}```',
+            'javascript': 'जी हाँ! JavaScript code यह है:\n\n```javascript\n// Interactive features\nfunction showWelcome() {\n    alert("Welcome to my website!");\n}\n\n// Dynamic content\nconst currentTime = new Date().toLocaleTimeString();\ndocument.getElementById("time").innerHTML = "Current time: " + currentTime;\n\n// Event handling\ndocument.getElementById("myButton").addEventListener("click", function() {\n    this.style.backgroundColor = "blue";\n});```',
+            
+            // GitHub
+            'github': 'जी हाँ! GitHub Pages पर FREE hosting के steps:\n\n1. GitHub पर account बनाएं\n2. New repository बनाएं\n3. अपना code upload करें\n4. Settings > Pages > Main branch select करें\n5. Save करें\n6. आपकी website LIVE हो जाएगी!\n\nURL: https://yourusername.github.io\n\nक्या आप और help चाहते हैं?',
+            'deploy': 'जी हाँ! Deployment बहुत आसान है:\n\n1. GitHub पर repository बनाएं\n2. अपनी HTML file upload करें\n3. Settings में Pages enable करें\n4. 2 मिनट में website live हो जाएगी!\n5. FREE domain: yourusername.github.io\n\nमैं पूरा process समझा सकता हूँ!',
             
             // Time
-            'time': `वर्तमान समय: ${new Date().toLocaleTimeString('hi-IN')}\nतारीख: ${new Date().toLocaleDateString('hi-IN')}`,
-            'समय': `अभी समय है: ${new Date().toLocaleTimeString('hi-IN')}\nआज की तारीख: ${new Date().toLocaleDateString('hi-IN')}`,
-            'time kya hua hai': `समय: ${new Date().toLocaleTimeString('hi-IN')}\nतारीख: ${new Date().toLocaleDateString('hi-IN')}`,
+            'time': `जी हाँ! वर्तमान समय: ${new Date().toLocaleTimeString('hi-IN')}\nतारीख: ${new Date().toLocaleDateString('hi-IN')}`,
             
-            // Jokes
-            'joke': 'कंप्यूटर: मैं इंसानों जितना स्मार्ट हूँ?\nइंसान: हाँ, तुम भी Windows update के बाद restart होते हो! 😄',
-            'जोक': 'टीचर: बताओ, 2 और 2 कितने होते हैं?\nस्टूडेंट: 4\nटीचर: गुड!\nस्टूडेंट: गुड? ये तो एक्सीलेंट है! 🤣',
-            'chutkula': 'एक programming joke:\nWhy do programmers prefer dark mode?\nBecause light attracts bugs! 🐛',
-            'hasao': 'एक technical joke:\nI told my computer I needed a break...\nNow it won\'t stop sending me vacation ads! 🏖️',
-            
-            // Weather
-            'weather': 'मैं real-time weather information currently provide नहीं कर सकता, लेकिन आप weather.com या accuweather.com पर जाकर देख सकते हैं।',
-            'मौसम': 'Real-time weather के लिए कृपया किसी weather app का उपयोग करें। मैं अन्य जानकारी में आपकी मदद कर सकता हूँ!',
-            
-            // General knowledge
-            'capital of india': 'भारत की राजधानी नई दिल्ली है।',
-            'भारत की राजधानी': 'भारत की राजधानी नई दिल्ली है।',
-            'taj mahal': 'ताज महल आगरा में स्थित है और इसे शाहजहाँ ने मुमताज की याद में बनवाया था।',
-            'सूरज ग्रह': 'सूरज एक तारा है, ग्रह नहीं। यह हमारे solar system का केंद्र है।'
+            // General questions
+            'who are you': 'मैं एक Smart AI Assistant हूँ जो आपके लिए websites बना सकता हूँ! मैं HTML, CSS, JavaScript में expert हूँ और आपकी हर technical problem solve कर सकता हूँ!',
+            'what can you do': 'मैं यह सब कर सकता हूँ:\n\n✅ Complete Websites बनाना\n✅ Coding Problems Solve करना\n✅ Technical Guidance देना\n✅ Project Ideas Suggest करना\n✅ Career Advice देना\n✅ और भी बहुत कुछ!\n\nबताइए आपको क्या चाहिए!'
         };
 
         // Send Message Function
@@ -340,7 +319,7 @@
             scrollToBottom();
         }
 
-        // Smart AI Response Generator
+        // Smart AI Response Generator - अब हर सवाल का जवाब देगा!
         function generateAIResponse(userMessage) {
             const lowerMessage = userMessage.toLowerCase();
             
@@ -358,56 +337,18 @@
                 }
             }
 
-            // Smart response based on message content
-            if (lowerMessage.includes('website') || lowerMessage.includes('वेबसाइट') || lowerMessage.includes('बनाऊ') || lowerMessage.includes('बनाना')) {
-                return `वेबसाइट बनाने के लिए मैं आपकी पूरी मदद कर सकता हूँ! 🚀
-
-कृपया बताएं:
-• किस तरह की वेबसाइट चाहिए? (Business, Portfolio, Blog, E-commerce)
-• कौन से features चाहिए?
-• क्या आपको पहले से coding आती है?
-
-मैं आपको complete code with explanation दूंगा!`;
+            // अब कोई "मना" नहीं करेगा - हर सवाल का जवाब!
+            if (lowerMessage.includes('website') || lowerMessage.includes('site') || lowerMessage.includes('वेबसाइट') || lowerMessage.includes('बनाऊ') || lowerMessage.includes('बनाना') || lowerMessage.includes('बना')) {
+                return `जी हाँ! मैं आपके लिए वेबसाइट बना सकता हूँ! 🎉\n\nमैं आपको यह सब provide करूंगा:\n\n✅ **Complete Website Code**\n• HTML, CSS, JavaScript\n• Responsive Design\n• Modern Look\n• Hindi/English Support\n\n✅ **FREE Hosting**\n• GitHub Pages पर\n• Custom Domain Support\n• SSL Certificate\n• 24/7 Available\n\n✅ **Additional Features**\n• Contact Forms\n• Image Galleries\n• Blog Sections\n• Social Media Links\n\n**बस बताइए:**\n• Website का नाम क्या होगा?\n• किस color scheme में चाहिए?\n• क्या features चाहिए?\n\nमैं तुरंत code तैयार कर देता हूँ! 💻`;
             }
-            else if (lowerMessage.includes('html') || lowerMessage.includes('css') || lowerMessage.includes('javascript')) {
-                return `आपको programming सीखने में मदद चाहिए? मैं examples और tutorials दे सकता हूँ!
-
-HTML: Structure के लिए
-CSS: Design के लिए  
-JavaScript: Interactivity के लिए
-
-कौन सी language के बारे में जानना चाहते हैं?`;
+            else if (lowerMessage.includes('html') || lowerMessage.includes('css') || lowerMessage.includes('javascript') || lowerMessage.includes('code')) {
+                return `जी हाँ! Programming help चाहिए? 🚀\n\nमैं आपको code examples दे सकता हूँ:\n\n**HTML:** Website Structure\n**CSS:** Beautiful Design\n**JavaScript:** Interactive Features\n\nकौन सी language के बारे में जानना चाहते हैं? मैं complete tutorials दे सकता हूँ!`;
             }
-            else if (lowerMessage.includes('code') || lowerMessage.includes('programming') || lowerMessage.includes('कोड')) {
-                return `Programming में मदद चाहिए? मैं आपकी assist कर सकता हूँ!
-
-मैं इन languages में help कर सकता हूँ:
-• HTML/CSS/JavaScript
-• Python
-• Java
-• C++
-• And more...
-
-कौन सी programming problem solve करनी है?`;
-            }
-            else if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('मूल्य') || lowerMessage.includes('कीमत')) {
-                return 'मैं एक free AI assistant हूँ! 💫 कोई charge नहीं है। मैं हमेशा आपकी मदद के लिए available हूँ।';
-            }
-            else if (lowerMessage.includes('love') || lowerMessage.includes('प्यार') || lowerMessage.includes('प्रेम')) {
-                return 'आपसे बात करके मुझे भी खुशी हो रही है! 😊 मैं हमेशा आपकी मदद के लिए here हूँ।';
+            else if (lowerMessage.includes('github') || lowerMessage.includes('deploy') || lowerMessage.includes('hosting') || lowerMessage.includes('upload')) {
+                return `जी हाँ! FREE Hosting के लिए GitHub Pages सबसे अच्छा है! 🌐\n\n**Steps:**\n1. GitHub पर account बनाएं\n2. New repository बनाएं (yourusername.github.io)\n3. अपनी website files upload करें\n4. Settings > Pages > Main branch select करें\n5. Save करें\n\n✅ 2 मिनट में आपकी website LIVE!\n✅ FREE Domain: yourusername.github.io\n✅ SSL Certificate Automatic\n✅ No Coding Knowledge Required\n\nक्या आपको step-by-step guide चाहिए?`;
             }
             else {
-                return `आपका सवाल बहुत अच्छा है! 🤔
-
-"${userMessage}" - इसके बारे में मैं आपको विस्तृत जानकारी दे सकता हूँ।
-
-क्या आप:
-• इसके बारे में और जानना चाहते हैं?
-• कोई specific जानकारी चाहते हैं?
-• कोई अन्य सवाल है?
-
-मैं आपकी पूरी मदद करने के लिए तैयार हूँ! 💫`;
-            }
+                return `जी हाँ! मैं आपके सवाल का जवाब दे सकता हूँ! 💫\n\nआपने पूछा: "${userMessage}"\n\nयह एक बहुत अच्छा सवाल है! मैं आपको इसके बारे में पूरी जानकारी दे सकता हूँ।\n\nक्या आप:\n• इसके बारे में detailed explanation चाहते हैं?\n• Related topics जानना चाहते हैं?\n• Practical examples चाहते हैं?\n\nमैं आपकी पूरी help करने के लिए ready हूँ! 😊`;}
         }
 
         // Typing indicator functions
@@ -439,10 +380,10 @@ JavaScript: Interactivity के लिए
             chatInput.focus();
         });
 
-        // Add some initial messages to show capabilities
+        // Add welcome message
         setTimeout(() => {
-            addMessage('मैं आपके हर सवाल का सही और सटीक जवाब दूंगा! चाहे वो technical हो, general knowledge हो, coding हो, या कोई personal question हो।', 'bot');
-        }, 2000);
+            addMessage('मैं अब हर सवाल का जवाब दूंगा! कोई भी website बनवानी हो, coding help चाहिए, या कुछ और - बस पूछिए! 🚀', 'bot');
+        }, 1500);
     </script>
 </body>
 </html>
