@@ -77,6 +77,16 @@ function generateHumanResponse(userMessage) {
         return `🌤️ **आज का मौसम**\n\nदिल्ली: 28°C, हल्की धूप\nमुंबई: 32°C, नमी\nबैंगलोर: 26°C, सुहावना\n\nकिस शहर का मौसम जानना चाहते हो?`;
     }
 
+    // News
+    if (lowerMessage.includes('news') || lowerMessage.includes('khabar')) {
+        return `📰 **आज की ताजा खबरें**\n\n• Technology में नए innovation\n• Sports में रोमांचक मैच\n• Business updates\n• Entertainment news\n\nकिस topic की खबर चाहिए?`;
+    }
+
+    // Cricket
+    if (lowerMessage.includes('cricket') || lowerMessage.includes('score')) {
+        return `🏏 **Live Cricket Scores**\n\nIND vs AUS: India 285/5 (50 overs)\nPAK vs ENG: Match starting soon\n\nकौन सा match देखना चाहते हो?`;
+    }
+
     // Numbers - सीधे जवाब
     if (/^\d+$/.test(userMessage.trim())) {
         const number = parseInt(userMessage.trim());
@@ -172,7 +182,4 @@ window.addEventListener('load', () => {
     chatInput.focus();
 });
 
-// Welcome message after load
-setTimeout(() => {
-    addMessage('तुम जैसे बोलोगे, मैं वैसे ही जवाब दूंगा! कोई formal बातचीत नहीं - बिल्कुल दोस्तों जैसी बातचीत! 😄', 'bot');
-}, 1000);
+// NO WELCOME MESSAGE - Clean Start
