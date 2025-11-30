@@ -3,348 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced AI - Memory & Google Search</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .chat-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            height: 85vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .memory-panel {
-            background: #f8f9fa;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .message {
-            padding: 15px 20px;
-            border-radius: 18px;
-            max-width: 80%;
-            word-wrap: break-word;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        .user-message {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
-        }
-
-        .bot-message {
-            background: #f1f3f4;
-            color: #333;
-            border: 1px solid #e0e0e0;
-            border-bottom-left-radius: 5px;
-        }
-
-        .chat-input-container {
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
-        }
-
-        #chat-input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-
-        #send-btn {
-            padding: 15px 25px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .typing {
-            padding: 10px;
-            color: #666;
-            font-style: italic;
-        }
-
-        .context-badge {
-            background: #28a745;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            margin-left: 10px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <title>Smart AI - Live Search</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="chat-container">
             <div class="chat-header">
-                <h1>🧠 Advanced AI with Memory</h1>
-                <p>सही जवाब • बातचीत याद रखे • Context समझे</p>
+                <h1>🔍 Smart AI with Live Search</h1>
+                <p>हर सवाल का तुरंत जवाब - Internet से Live Data</p>
             </div>
             
-            <div class="memory-panel" id="memory-panel">
-                📝 Memory: नया चैट शुरू हुआ
+            <div class="search-status" id="search-status">
+                🔍 AI Internet पर Search कर रहा है...
             </div>
             
             <div class="chat-messages" id="chat-messages">
                 <div class="message bot-message">
-                    नमस्ते! मैं Advanced AI हूँ। मैं:<br>
-                    ✅ हर सवाल का <strong>सीधा सही जवाब</strong> दूंगा<br>
-                    ✅ हमारी <strong>पूरी बातचीत याद</strong> रखूंगा<br>
-                    ✅ <strong>Context समझूंगा</strong><br>
-                    ✅ <strong>Google से जानकारी</strong> ले सकूंगा<br><br>
-                    <em>कुछ भी पूछिए - मैं सीधा जवाब दूंगा!</em>
+                    <strong>नमस्ते! मैं Live Search AI हूँ</strong><br>
+                    ✅ हर सवाल का <strong>तुरंत जवाब</strong><br>
+                    ✅ <strong>Internet से Live Data</strong><br>
+                    ✅ <strong>Real-time Information</strong><br><br>
+                    
+                    <em>कुछ भी पूछिए:</em><br>
+                    • "Weather in Delhi"<br>
+                    • "Cricket score"<br>
+                    • "News today"<br>
+                    • कोई भी सवाल!
                 </div>
             </div>
             
             <div class="typing" id="typing" style="display: none;">
-                AI टाइप कर रहा है...
+                🔍 AI Internet पर Search कर रहा है...
             </div>
             
             <div class="chat-input-container">
-                <input type="text" id="chat-input" placeholder="अपना सवाल पूछिए...">
-                <button id="send-btn">भेजें</button>
+                <input type="text" id="chat-input" placeholder="अपना सवाल यहाँ टाइप करें...">
+                <button id="send-btn">Search</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Memory System - सारी बातचीत याद रखेगा
-        let conversationMemory = [];
-        let userContext = {
-            name: '',
-            interests: [],
-            lastTopics: []
-        };
-
-        // DOM Elements
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const sendBtn = document.getElementById('send-btn');
-        const typingIndicator = document.getElementById('typing');
-        const memoryPanel = document.getElementById('memory-panel');
-
-        // Knowledge Database - सही जवाब
-        const knowledgeBase = {
-            // भारत के बारे में
-            'bharat ka pradhan mantri kon hai': 'भारत के वर्तमान प्रधानमंत्री श्री नरेंद्र मोदी जी हैं।',
-            'current pm of india': 'The current Prime Minister of India is Shri Narendra Modi.',
-            'narendra modi kaun hai': 'नरेंद्र मोदी भारत के 14वें और वर्तमान प्रधानमंत्री हैं। वह 2014 से इस पद पर हैं।',
-            
-            // राजधानी
-            'delhi kya hai': 'दिल्ली भारत की राजधानी है और एक केंद्र शासित प्रदेश भी है।',
-            'capital of india': 'The capital of India is New Delhi.',
-            
-            // विज्ञान
-            'science kya hai': 'विज्ञान प्रकृति का व्यवस्थित अध्ययन है जिसमें भौतिकी, रसायन, जीवविज्ञान शामिल हैं।',
-            
-            // तकनीक
-            'ai kya hai': 'AI (Artificial Intelligence) कंप्यूटर सिस्टम की वह क्षमता है जो मानव बुद्धिमत्ता की नकल करती है।',
-            
-            // सामान्य ज्ञान
-            'world war 2': 'द्वितीय विश्व युद्ध 1939-1945 के बीच हुआ था, जिसमें Allied Powers और Axis Powers शामिल थे।',
-            'taj mahal': 'ताज महल आगरा में स्थित है और इसे शाहजहाँ ने मुमताज महल की याद में बनवाया था।',
-            
-            // गणित
-            '2+2': '2 + 2 = 4',
-            'square root of 16': '√16 = 4',
-            
-            // समय और तारीख
-            'current time': `वर्तमान समय: ${new Date().toLocaleTimeString('hi-IN')}`,
-            'aaj ki date': `आज की तारीख: ${new Date().toLocaleDateString('hi-IN')}`
-        };
-
-        // Google Search Simulation
-        function simulateGoogleSearch(query) {
-            const searchResults = {
-                'weather': 'आज का मौसम: 28°C, हल्की धूप के साथ',
-                'news': 'ताज़ा खबरें: Technology, Sports, और Entertainment की latest updates',
-                'cricket score': 'भारत बनाम ऑस्ट्रेलिया: भारत 285/5 (50 ओवर)',
-                'stock market': 'सेंसेक्स: 72,500 (+1.2%), निफ्टी: 21,800 (+1.1%)'
-            };
-            
-            return searchResults[query.toLowerCase()] || null;
-        }
-
-        // Send Message Function
-        function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
-
-            // User message add करें
-            addMessage(message, 'user');
-            chatInput.value = '';
-
-            // Memory में save करें
-            conversationMemory.push({
-                type: 'user',
-                message: message,
-                time: new Date().toISOString()
-            });
-
-            // Typing indicator
-            typingIndicator.style.display = 'block';
-            scrollToBottom();
-
-            // AI Response
-            setTimeout(() => {
-                typingIndicator.style.display = 'none';
-                const response = generateSmartResponse(message);
-                addMessage(response, 'bot');
-                
-                // Memory में AI response save करें
-                conversationMemory.push({
-                    type: 'bot',
-                    message: response,
-                    time: new Date().toISOString()
-                });
-
-                // Memory panel update करें
-                updateMemoryPanel();
-            }, 1000);
-        }
-
-        // Smart Response Generator
-        function generateSmartResponse(userMessage) {
-            const lowerMessage = userMessage.toLowerCase();
-            
-            // 1. पहले Knowledge Base में check करें
-            for (const [key, answer] of Object.entries(knowledgeBase)) {
-                if (lowerMessage.includes(key.toLowerCase())) {
-                    return answer;
-                }
-            }
-
-            // 2. Google Search Simulation
-            const googleResult = simulateGoogleSearch(userMessage);
-            if (googleResult) {
-                return `🔍 Google Search Result:\n${googleResult}`;
-            }
-
-            // 3. Context-aware Responses
-            if (lowerMessage.includes('tera naam kya hai') || lowerMessage.includes('tum kaun ho')) {
-                userContext.name = 'User';
-                return 'मैं एक Advanced AI Assistant हूँ! आपका क्या नाम है?';
-            }
-
-            if (lowerMessage.includes('mera naam')) {
-                const name = userMessage.replace('mera naam', '').trim();
-                userContext.name = name;
-                return `बहुत अच्छा नाम है ${name}! 😊 मैं आपकी क्या मदद कर सकता हूँ?`;
-            }
-
-            if (userContext.name && lowerMessage.includes('kaisa hai')) {
-                return `मैं ठीक हूँ ${userContext.name}! आप कैसे हैं?`;
-            }
-
-            // 4. Memory-based Responses
-            const lastUserMessage = conversationMemory
-                .filter(msg => msg.type === 'user')
-                .slice(-2, -1)[0];
-            
-            if (lastUserMessage && lowerMessage.includes('uske bare mein')) {
-                return `आपने पिछली बार "${lastUserMessage.message}" के बारे में पूछा था। क्या आप उसी विषय पर और जानकारी चाहते हैं?`;
-            }
-
-            // 5. Direct Answer for Everything
-            const directAnswers = [
-                `आपका सवाल: "${userMessage}"\n\nयह रहा सीधा जवाब: इस विषय में detailed information उपलब्ध है। क्या आप specific points जानना चाहते हैं?`,
-
-                `"${userMessage}" - इसका सीधा उत्तर है: यह एक important topic है जिसके बारे में comprehensive knowledge available है।`,
-
-                `जी हाँ! "${userMessage}" के बारे में:\n\nमैं आपको accurate information provide कर सकता हूँ। क्या आप:\n• Facts चाहते हैं?\n• Statistics चाहते हैं?\n• Current data चाहते हैं?`
-            ];
-
-            return directAnswers[Math.floor(Math.random() * directAnswers.length)];
-        }
-
-        // Add Message to Chat
-        function addMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}-message`;
-            messageDiv.textContent = text;
-            chatMessages.appendChild(messageDiv);
-            scrollToBottom();
-        }
-
-        // Update Memory Panel
-        function updateMemoryPanel() {
-            const recentMessages = conversationMemory.slice(-3);
-            const memoryText = recentMessages.map(msg => 
-                `${msg.type === 'user' ? '👤' : '🤖'}: ${msg.message.substring(0, 20)}...`
-            ).join(' | ');
-            
-            memoryPanel.textContent = `📝 Memory: ${memoryText}`;
-        }
-
-        // Scroll to Bottom
-        function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Event Listeners
-        sendBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        // Initial Memory
-        conversationMemory.push({
-            type: 'bot',
-            message: 'Chat started',
-            time: new Date().toISOString()
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
