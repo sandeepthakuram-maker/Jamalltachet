@@ -3,43 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart AI - Live Search</title>
+    <title>ULTRA AI - दुनिया का सबसे Powerful AI</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="chat-container">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>🚀 ULTRA AI</h2>
+                <p>दुनिया का सबसे शक्तिशाली AI</p>
+            </div>
+            <button class="new-chat-btn" onclick="newChat()">
+                + नया चैट शुरू करें
+            </button>
+            <div class="chat-history" id="chat-history">
+                <!-- Chat history will appear here -->
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar">👤</div>
+                <span class="user-name">User</span>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-content">
             <div class="chat-header">
-                <h1>🔍 Smart AI with Live Search</h1>
-                <p>हर सवाल का तुरंत जवाब - Internet से Live Data</p>
-            </div>
-            
-            <div class="search-status" id="search-status">
-                🔍 AI Internet पर Search कर रहा है...
-            </div>
-            
-            <div class="chat-messages" id="chat-messages">
-                <div class="message bot-message">
-                    <strong>नमस्ते! मैं Live Search AI हूँ</strong><br>
-                    ✅ हर सवाल का <strong>तुरंत जवाब</strong><br>
-                    ✅ <strong>Internet से Live Data</strong><br>
-                    ✅ <strong>Real-time Information</strong><br><br>
-                    
-                    <em>कुछ भी पूछिए:</em><br>
-                    • "Weather in Delhi"<br>
-                    • "Cricket score"<br>
-                    • "News today"<br>
-                    • कोई भी सवाल!
+                <h1>ULTRA AI Assistant</h1>
+                <div class="ai-status">
+                    <span class="status-dot"></span>
+                    <span>Online - Real-time Search Active</span>
                 </div>
             </div>
-            
-            <div class="typing" id="typing" style="display: none;">
-                🔍 AI Internet पर Search कर रहा है...
+
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will appear here -->
             </div>
-            
-            <div class="chat-input-container">
-                <input type="text" id="chat-input" placeholder="अपना सवाल यहाँ टाइप करें...">
-                <button id="send-btn">Search</button>
+
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span>ULTRA AI सोच रहा है...</span>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <input type="text" id="chat-input" placeholder="ULTRA AI से कुछ भी पूछें..." autofocus>
+                    <div class="input-buttons">
+                        <button class="file-btn" onclick="document.getElementById('file-input').click()">📎</button>
+                        <button class="voice-btn" onclick="toggleVoice()">🎤</button>
+                        <button id="send-btn" onclick="sendMessage()">➤</button>
+                    </div>
+                </div>
+                <input type="file" id="file-input" style="display: none;" onchange="handleFileUpload(this.files)">
+            </div>
+
+            <div class="features-bar">
+                <div class="feature-tag">🌐 Real-time Internet Search</div>
+                <div class="feature-tag">🧠 Advanced AI Analysis</div>
+                <div class="feature-tag">📚 100+ Languages</div>
+                <div class="feature-tag">🎯 Instant Answers</div>
+                <div class="feature-tag">💾 Memory & Context</div>
             </div>
         </div>
     </div>
