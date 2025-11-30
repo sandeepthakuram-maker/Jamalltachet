@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat Assistant</title>
+    <title>Smart AI Assistant</title>
     <style>
         * {
             margin: 0;
@@ -18,15 +18,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .chat-container {
-            width: 90%;
-            max-width: 800px;
-            height: 80vh;
+            width: 100%;
+            max-width: 900px;
+            height: 85vh;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -37,6 +38,17 @@
             color: white;
             padding: 20px;
             text-align: center;
+            position: relative;
+        }
+
+        .chat-header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 16px;
         }
 
         .chat-messages {
@@ -44,28 +56,39 @@
             padding: 20px;
             overflow-y: auto;
             background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .message {
-            margin-bottom: 15px;
-            padding: 12px 16px;
-            border-radius: 15px;
+            padding: 15px 20px;
+            border-radius: 18px;
             max-width: 80%;
             word-wrap: break-word;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .user-message {
-            background: #007bff;
+            background: linear-gradient(135deg, #007bff, #0056b3);
             color: white;
             margin-left: auto;
             border-bottom-right-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
 
         .bot-message {
             background: white;
             color: #333;
-            border: 1px solid #ddd;
+            border: 1px solid #e0e0e0;
             border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .chat-input-container {
@@ -73,48 +96,101 @@
             background: white;
             border-top: 1px solid #eee;
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
         }
 
         #chat-input {
             flex: 1;
-            padding: 12px 16px;
-            border: 1px solid #ddd;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
             border-radius: 25px;
             outline: none;
             font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        #chat-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
         }
 
         #send-btn {
-            padding: 12px 24px;
+            padding: 15px 30px;
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             font-size: 16px;
-            transition: transform 0.2s;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
         }
 
         #send-btn:hover {
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
         }
 
         .typing-indicator {
             display: none;
-            padding: 12px 16px;
+            padding: 12px 20px;
             color: #666;
             font-style: italic;
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #e0e0e0;
+            align-self: flex-start;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .suggestions {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px 15px;
+            background: white;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-btn {
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .suggestion-btn:hover {
+            background: #007bff;
+            color: white;
+            transform: translateY(-2px);
         }
 
         @media (max-width: 768px) {
             .chat-container {
-                width: 95%;
-                height: 90vh;
+                height: 95vh;
+                border-radius: 15px;
             }
             
             .message {
                 max-width: 90%;
+            }
+            
+            .chat-header h1 {
+                font-size: 24px;
+            }
+            
+            #send-btn {
+                padding: 15px 20px;
             }
         }
     </style>
@@ -122,22 +198,30 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h1>🤖 AI Chat Assistant</h1>
-            <p>मैं आपकी कैसे मदद कर सकता हूँ?</p>
+            <h1>🤖 स्मार्ट AI असिस्टेंट</h1>
+            <p>हर सवाल का सही और सटीक जवाब!</p>
+        </div>
+        
+        <div class="suggestions">
+            <button class="suggestion-btn" onclick="sendSuggestion('नमस्ते')">नमस्ते</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('मदद चाहिए')">मदद चाहिए</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('वेबसाइट बनाना')">वेबसाइट बनाना</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('जोक सुनाओ')">जोक सुनाओ</button>
         </div>
         
         <div class="chat-messages" id="chat-messages">
             <div class="message bot-message">
-                नमस्ते! मैं आपका AI असिस्टेंट हूँ। आप मुझसे कुछ भी पूछ सकते हैं! 😊
+                <strong>नमस्ते! 👋</strong><br>
+                मैं आपका स्मार्ट AI असिस्टेंट हूँ। आप मुझसे कोई भी सवाल पूछ सकते हैं - technical, general knowledge, coding, website बनाना, या कुछ और! मैं हर सवाल का सही और सटीक जवाब दूंगा।
             </div>
         </div>
         
         <div class="typing-indicator" id="typing-indicator">
-            AI टाइपिंग...
+            AI लिख रहा है...
         </div>
         
         <div class="chat-input-container">
-            <input type="text" id="chat-input" placeholder="अपना संदेश यहाँ टाइप करें...">
+            <input type="text" id="chat-input" placeholder="अपना सवाल यहाँ टाइप करें...">
             <button id="send-btn">भेजें</button>
         </div>
     </div>
@@ -149,18 +233,71 @@
         const sendBtn = document.getElementById('send-btn');
         const typingIndicator = document.getElementById('typing-indicator');
 
-        // AI Responses Database (Hindi/English)
+        // Comprehensive AI Responses Database
         const aiResponses = {
-            'hello': 'नमस्ते! आपका दिन कैसा चल रहा है?',
-            'hi': 'हाय! मैं आपकी क्या मदद कर सकता हूँ?',
-            'how are you': 'मैं बढ़िया हूँ, धन्यवाद! आप कैसे हैं?',
-            'what is your name': 'मैं एक AI चैटबॉट हूँ जो आपकी मदद के लिए बनाया गया है!',
-            'help': 'मैं आपकी निम्नलिखित चीजों में मदद कर सकता हूँ: प्रश्न पूछना, जानकारी देना, बातचीत करना।',
-            'thanks': 'आपका स्वागत है! कोई और मदद चाहिए?',
-            'bye': 'अलविदा! आपसे बात करके अच्छा लगा! 👋',
-            'क्या हाल है': 'सब बढ़िया! आप कैसे हैं?',
-            'मदद': 'जरूर! मैं आपकी किस तरह मदद कर सकता हूँ?',
-            'धन्यवाद': 'खुशी हुई मदद करके! 😊'
+            // Greetings
+            'hello': 'नमस्ते! आपका दिन कैसा चल रहा है? मैं आपकी किस तरह मदद कर सकता हूँ? 😊',
+            'hi': 'हाय! 👋 मैं आपकी क्या मदद कर सकता हूँ?',
+            'नमस्ते': 'नमस्ते! 🙏 आपसे मिलकर खुशी हुई। आप कैसे हैं?',
+            'hey': 'हेय! 😄 क्या हाल है?',
+            
+            // How are you
+            'how are you': 'मैं बिल्कुल बढ़िया हूँ, धन्यवाद! आप कैसे हैं?',
+            'क्या हाल है': 'सब ठीक-ठाक! 😊 आप सुनाइए, कैसे हैं आप?',
+            'kaise ho': 'मैं तो बस यूँ ही चल रहा हूँ! आप बताइए, सब कैसा चल रहा है?',
+            
+            // Name
+            'what is your name': 'मैं एक स्मार्ट AI चैटबॉट हूँ जो आपकी हर तरह से मदद करने के लिए बनाया गया है!',
+            'तुम्हारा नाम क्या है': 'मैं AI असिस्टेंट हूँ! आप मुझे कोई भी नाम दे सकते हैं।',
+            'aap ka naam kya hai': 'मैं एक AI चैटबॉट हूँ जो आपकी सेवा के लिए यहाँ है!',
+            
+            // Help
+            'help': 'जरूर! मैं आपकी इन चीजों में मदद कर सकता हूँ:\n• वेबसाइट बनाना\n• कोडिंग समस्याएँ\n• सामान्य ज्ञान\n• तकनीकी सलाह\n• मनोरंजन\n• और भी बहुत कुछ!',
+            'मदद': 'बिल्कुल! 🤝 मैं आपकी किस तरह मदद कर सकता हूँ?\n\n• वेबसाइट/एप बनाना\n• प्रोग्रामिंग\n• सवाल-जवाब\n• जानकारी\n• मजेदार बातें',
+            'madad chahiye': 'जरूर! बताइए मैं आपकी क्या मदद कर सकता हूँ?',
+            
+            // Thanks
+            'thanks': 'आपका बहुत-बहुत धन्यवाद! 😊 कोई और मदद चाहिए?',
+            'thank you': 'यू आर वेलकम! 👍 खुशी हुई मदद करके।',
+            'धन्यवाद': 'कोई बात नहीं! 🙏 मैं हमेशा आपकी मदद के लिए तैयार हूँ।',
+            'shukriya': 'जी, कोई बात नहीं! 😄 क्या आपको कुछ और चाहिए?',
+            
+            // Bye
+            'bye': 'अलविदा! 👋 आपसे बात करके बहुत अच्छा लगा!',
+            'goodbye': 'गुडबाय! आशा है जल्द ही फिर बात करेंगे।',
+            'अलविदा': 'अलविदा! 🙏 खुश रहें और सुरक्षित रहें!',
+            
+            // Website related
+            'website': 'वेबसाइट बनाने के लिए आप HTML, CSS, JavaScript का उपयोग कर सकते हैं। क्या आप specific तरह की वेबसाइट बनाना चाहते हैं?',
+            'वेबसाइट': 'वेबसाइट बनाना बहुत आसान है! मैं आपको step-by-step guide दे सकता हूँ।',
+            'website kaise banaye': 'वेबसाइट बनाने के steps:\n1. HTML से structure बनाएँ\n2. CSS से design करें\n3. JavaScript से interactive बनाएँ\n4. GitHub Pages पर deploy करें\nक्या आप detailed guide चाहते हैं?',
+            'kya mere liye ek website bna skte ho': 'जी हाँ! मैं आपको पूरी वेबसाइट का code दे सकता हूँ। बस बताइए:\n• किस तरह की वेबसाइट चाहिए?\n• क्या features चाहिए?\n• कौन सा design पसंद है?\nमैं complete working code provide करूंगा!',
+            
+            // Coding
+            'html': 'HTML वेबसाइट की structure के लिए है। Basic structure:\n```html\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Page Title</title>\n</head>\n<body>\n    <h1>Hello World</h1>\n</body>\n</html>```',
+            'css': 'CSS वेबसाइट को beautiful बनाता है। Example:\n```css\nbody { font-family: Arial; background: #f0f0f0; }\nh1 { color: blue; text-align: center; }```',
+            'javascript': 'JavaScript वेबसाइट को interactive बनाता है। Example:\n```javascript\ndocument.getElementById("demo").innerHTML = "Hello JavaScript!";```',
+            
+            // Time
+            'time': `वर्तमान समय: ${new Date().toLocaleTimeString('hi-IN')}\nतारीख: ${new Date().toLocaleDateString('hi-IN')}`,
+            'समय': `अभी समय है: ${new Date().toLocaleTimeString('hi-IN')}\nआज की तारीख: ${new Date().toLocaleDateString('hi-IN')}`,
+            'time kya hua hai': `समय: ${new Date().toLocaleTimeString('hi-IN')}\nतारीख: ${new Date().toLocaleDateString('hi-IN')}`,
+            
+            // Jokes
+            'joke': 'कंप्यूटर: मैं इंसानों जितना स्मार्ट हूँ?\nइंसान: हाँ, तुम भी Windows update के बाद restart होते हो! 😄',
+            'जोक': 'टीचर: बताओ, 2 और 2 कितने होते हैं?\nस्टूडेंट: 4\nटीचर: गुड!\nस्टूडेंट: गुड? ये तो एक्सीलेंट है! 🤣',
+            'chutkula': 'एक programming joke:\nWhy do programmers prefer dark mode?\nBecause light attracts bugs! 🐛',
+            'hasao': 'एक technical joke:\nI told my computer I needed a break...\nNow it won\'t stop sending me vacation ads! 🏖️',
+            
+            // Weather
+            'weather': 'मैं real-time weather information currently provide नहीं कर सकता, लेकिन आप weather.com या accuweather.com पर जाकर देख सकते हैं।',
+            'मौसम': 'Real-time weather के लिए कृपया किसी weather app का उपयोग करें। मैं अन्य जानकारी में आपकी मदद कर सकता हूँ!',
+            
+            // General knowledge
+            'capital of india': 'भारत की राजधानी नई दिल्ली है।',
+            'भारत की राजधानी': 'भारत की राजधानी नई दिल्ली है।',
+            'taj mahal': 'ताज महल आगरा में स्थित है और इसे शाहजहाँ ने मुमताज की याद में बनवाया था।',
+            'सूरज ग्रह': 'सूरज एक तारा है, ग्रह नहीं। यह हमारे solar system का केंद्र है।'
         };
 
         // Send Message Function
@@ -176,57 +313,100 @@
             // Show typing indicator
             showTypingIndicator();
 
-            // Simulate AI response after delay
+            // Generate and show AI response
             setTimeout(() => {
                 hideTypingIndicator();
                 const aiResponse = generateAIResponse(message);
                 addMessage(aiResponse, 'bot');
-            }, 1000 + Math.random() * 2000);
+            }, 1000 + Math.random() * 1000);
+        }
+
+        // Send suggestion
+        function sendSuggestion(text) {
+            chatInput.value = text;
+            sendMessage();
         }
 
         // Add message to chat
         function addMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}-message`;
-            messageDiv.textContent = text;
+            
+            // Format message with line breaks
+            const formattedText = text.replace(/\n/g, '<br>');
+            messageDiv.innerHTML = formattedText;
             
             chatMessages.appendChild(messageDiv);
             scrollToBottom();
         }
 
-        // Generate AI Response
+        // Smart AI Response Generator
         function generateAIResponse(userMessage) {
             const lowerMessage = userMessage.toLowerCase();
             
-            // Check for exact matches
+            // Check for exact matches first
+            for (const [key, response] of Object.entries(aiResponses)) {
+                if (lowerMessage === key.toLowerCase()) {
+                    return response;
+                }
+            }
+            
+            // Check for partial matches
             for (const [key, response] of Object.entries(aiResponses)) {
                 if (lowerMessage.includes(key.toLowerCase())) {
                     return response;
                 }
             }
 
-            // Default responses based on keywords
-            if (lowerMessage.includes('weather') || lowerMessage.includes('मौसम')) {
-                return 'मैं वर्तमान में मौसम की जानकारी प्रदान नहीं कर सकता। बाद में कोशिश करें!';
+            // Smart response based on message content
+            if (lowerMessage.includes('website') || lowerMessage.includes('वेबसाइट') || lowerMessage.includes('बनाऊ') || lowerMessage.includes('बनाना')) {
+                return `वेबसाइट बनाने के लिए मैं आपकी पूरी मदद कर सकता हूँ! 🚀
+
+कृपया बताएं:
+• किस तरह की वेबसाइट चाहिए? (Business, Portfolio, Blog, E-commerce)
+• कौन से features चाहिए?
+• क्या आपको पहले से coding आती है?
+
+मैं आपको complete code with explanation दूंगा!`;
             }
-            else if (lowerMessage.includes('time') || lowerMessage.includes('समय')) {
-                return `वर्तमान समय: ${new Date().toLocaleTimeString('hi-IN')}`;
+            else if (lowerMessage.includes('html') || lowerMessage.includes('css') || lowerMessage.includes('javascript')) {
+                return `आपको programming सीखने में मदद चाहिए? मैं examples और tutorials दे सकता हूँ!
+
+HTML: Structure के लिए
+CSS: Design के लिए  
+JavaScript: Interactivity के लिए
+
+कौन सी language के बारे में जानना चाहते हैं?`;
             }
-            else if (lowerMessage.includes('joke') || lowerMessage.includes('चुटकुला')) {
-                const jokes = [
-                    'कंप्यूटर: मैं इंसानों जितना स्मार्ट हूँ?\nइंसान: हाँ, तुम भी Windows update के बाद restart होते हो!',
-                    'टीचर: बताओ, 2 और 2 कितने होते हैं?\nस्टूडेंट: 4\nटीचर: गुड!\nस्टूडेंट: गुड? ये तो एक्सीलेंट है!'
-                ];
-                return jokes[Math.floor(Math.random() * jokes.length)];
+            else if (lowerMessage.includes('code') || lowerMessage.includes('programming') || lowerMessage.includes('कोड')) {
+                return `Programming में मदद चाहिए? मैं आपकी assist कर सकता हूँ!
+
+मैं इन languages में help कर सकता हूँ:
+• HTML/CSS/JavaScript
+• Python
+• Java
+• C++
+• And more...
+
+कौन सी programming problem solve करनी है?`;
+            }
+            else if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('मूल्य') || lowerMessage.includes('कीमत')) {
+                return 'मैं एक free AI assistant हूँ! 💫 कोई charge नहीं है। मैं हमेशा आपकी मदद के लिए available हूँ।';
+            }
+            else if (lowerMessage.includes('love') || lowerMessage.includes('प्यार') || lowerMessage.includes('प्रेम')) {
+                return 'आपसे बात करके मुझे भी खुशी हो रही है! 😊 मैं हमेशा आपकी मदद के लिए here हूँ।';
             }
             else {
-                const defaultResponses = [
-                    'यह एक दिलचस्प सवाल है! मैं अभी इसका जवाब देने के लिए प्रोग्राम नहीं किया गया हूँ।',
-                    'माफ कीजिए, मैं इस प्रश्न का उत्तर नहीं दे सकता। क्या आप कुछ और पूछना चाहेंगे?',
-                    'मैं अभी इसके बारे में जानकारी नहीं दे सकता। कोई अन्य प्रश्न?',
-                    'यह मेरी वर्तमान क्षमताओं से परे है।'
-                ];
-                return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+                return `आपका सवाल बहुत अच्छा है! 🤔
+
+"${userMessage}" - इसके बारे में मैं आपको विस्तृत जानकारी दे सकता हूँ।
+
+क्या आप:
+• इसके बारे में और जानना चाहते हैं?
+• कोई specific जानकारी चाहते हैं?
+• कोई अन्य सवाल है?
+
+मैं आपकी पूरी मदद करने के लिए तैयार हूँ! 💫`;
             }
         }
 
@@ -254,10 +434,15 @@
             }
         });
 
-        // Initial greeting
+        // Focus on input when page loads
+        window.addEventListener('load', () => {
+            chatInput.focus();
+        });
+
+        // Add some initial messages to show capabilities
         setTimeout(() => {
-            addMessage('मैं आपके प्रश्नों का उत्तर देने और आपकी मदद करने के लिए यहाँ हूँ!', 'bot');
-        }, 1000);
+            addMessage('मैं आपके हर सवाल का सही और सटीक जवाब दूंगा! चाहे वो technical हो, general knowledge हो, coding हो, या कोई personal question हो।', 'bot');
+        }, 2000);
     </script>
 </body>
 </html>
