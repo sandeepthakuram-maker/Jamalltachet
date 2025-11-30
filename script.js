@@ -1,185 +1,249 @@
-// DOM Elements
-const chatMessages = document.getElementById('chat-messages');
-const chatInput = document.getElementById('chat-input');
-const sendBtn = document.getElementById('send-btn');
-const typingIndicator = document.getElementById('typing');
-const searchStatus = document.getElementById('search-status');
+// ULTRA AI - दुनिया का सबसे Powerful AI
+class UltraAI {
+    constructor() {
+        this.conversationHistory = [];
+        this.userContext = {};
+        this.isVoiceActive = false;
+        this.init();
+    }
 
-// Conversation Memory
-let conversationHistory = [];
-let userName = '';
+    init() {
+        this.setupEventListeners();
+        this.loadConversationHistory();
+        console.log('🚀 ULTRA AI Initialized - Ready for World Domination!');
+    }
 
-// Send Message Function
-function sendMessage() {
-    const message = chatInput.value.trim();
-    if (!message) return;
+    setupEventListeners() {
+        const sendBtn = document.getElementById('send-btn');
+        const chatInput = document.getElementById('chat-input');
 
-    // Add user message
-    addMessage(message, 'user');
-    chatInput.value = '';
+        sendBtn.addEventListener('click', () => this.sendMessage());
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.sendMessage();
+        });
 
-    // Save to history
-    conversationHistory.push({ type: 'user', content: message, time: new Date() });
+        // Voice recognition setup
+        this.setupVoiceRecognition();
+    }
 
-    // Show searching indicator
-    showSearching();
+    async sendMessage() {
+        const chatInput = document.getElementById('chat-input');
+        const message = chatInput.value.trim();
+        
+        if (!message) return;
 
-    // Get AI response
-    setTimeout(() => {
-        hideSearching();
-        const response = generateHumanResponse(message);
-        addMessage(response, 'bot');
-        conversationHistory.push({ type: 'bot', content: response, time: new Date() });
-    }, 1000);
-}
+        // Add user message
+        this.addMessage(message, 'user');
+        chatInput.value = '';
 
-// Human-like Response Generator - FIXED
-function generateHumanResponse(userMessage) {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    // Extract name if provided
-    if ((lowerMessage.includes('mera naam') || lowerMessage.includes('my name is')) && !userName) {
-        const nameMatch = userMessage.match(/(mera naam|my name is)\s+([a-zA-Zअ-ज़]+)/i);
-        if (nameMatch && nameMatch[2]) {
-            userName = nameMatch[2];
-            return `बहुत खूब ${userName}! 😊 तुम्हारा नाम सुनकर अच्छा लगा। मैं तुम्हारी क्या मदद कर सकता हूँ?`;
+        // Show typing indicator
+        this.showTyping();
+
+        // Process and generate response
+        setTimeout(async () => {
+            this.hideTyping();
+            const response = await this.generateUltraResponse(message);
+            this.addMessage(response, 'bot');
+            
+            // Save to history
+            this.saveToHistory(message, response);
+        }, 1000 + Math.random() * 1000);
+    }
+
+    async generateUltraResponse(userMessage) {
+        const lowerMessage = userMessage.toLowerCase();
+        
+        // Real-time knowledge base with instant answers
+        const instantAnswers = {
+            // Greetings
+            'hi': 'नमस्ते! मैं ULTRA AI हूँ - दुनिया का सबसे advanced AI assistant! आपकी क्या मदद कर सकता हूँ? 🚀',
+            'hello': 'Hello! I am ULTRA AI - the most powerful AI in the world! How can I assist you today? 🌍',
+            'namaste': 'नमस्ते! 🙏 मैं ULTRA AI हूँ। आपसे बात करके खुशी हुई!',
+            
+            // Current Affairs
+            'current pm of india': 'भारत के वर्तमान प्रधानमंत्री श्री नरेंद्र मोदी जी हैं। (2024)',
+            'capital of india': 'भारत की राजधानी नई दिल्ली है।',
+            'population of india': 'भारत की जनसंख्या लगभग 1.4 बिलियन है (2024 estimates)।',
+            
+            // Science & Tech
+            'what is ai': 'Artificial Intelligence (AI) is the simulation of human intelligence in machines that are programmed to think and learn like humans. 🤖',
+            'machine learning': 'Machine learning is a subset of AI that enables computers to learn and make decisions from data without explicit programming.',
+            
+            // Time & Date
+            'current time': `वर्तमान समय: ${new Date().toLocaleTimeString('hi-IN')}`,
+            'today date': `आज की तारीख: ${new Date().toLocaleDateString('hi-IN')}`,
+            
+            // Math
+            '2+2': '2 + 2 = 4',
+            'square root of 16': '√16 = 4',
+            
+            // Weather
+            'weather': '🌤️ **Live Weather Update:**\nदिल्ली: 28°C, हल्की धूप\nमुंबई: 32°C, आर्द्र\nबैंगलोर: 26°C, सुहावना',
+            
+            // News
+            'news': '📰 **Latest News:**\n• Technology: AI breakthroughs in healthcare\n• Sports: Exciting cricket matches ongoing\n• Business: Stock markets showing positive trends',
+            
+            // Personal
+            'your name': 'मैं ULTRA AI हूँ - दुनिया का सबसे powerful artificial intelligence!',
+            'who are you': 'I am ULTRA AI, created to provide instant, accurate information and assist with any task you have! 🌟'
+        };
+
+        // Check for instant answers first
+        for (const [key, answer] of Object.entries(instantAnswers)) {
+            if (lowerMessage.includes(key)) {
+                return answer;
+            }
+        }
+
+        // Smart contextual responses
+        return this.generateSmartResponse(userMessage);
+    }
+
+    generateSmartResponse(userMessage) {
+        const lowerMessage = userMessage.toLowerCase();
+        
+        // Context-aware responses
+        const lastUserMessage = this.conversationHistory
+            .filter(msg => msg.type === 'user')
+            .slice(-1)[0];
+
+        // Emotional intelligence
+        if (lowerMessage.includes('thank') || lowerMessage.includes('धन्यवाद')) {
+            return 'आपका स्वागत है! 😊 मैं हमेशा आपकी मदद के लिए यहाँ हूँ। कोई और सवाल?';
+        }
+
+        if (lowerMessage.includes('sorry') || lowerMessage.includes('माफ')) {
+            return 'कोई बात नहीं! 😊 हम सब इंसान हैं, गलतियाँ होती हैं।';
+        }
+
+        // Question pattern detection
+        if (lowerMessage.includes('क्यों') || lowerMessage.includes('why')) {
+            return `"${userMessage}" - यह एक excellent question है! मैं आपको detailed explanation देता हूँ...`;
+        }
+
+        if (lowerMessage.includes('कैसे') || lowerMessage.includes('how')) {
+            return `"${userMessage}" - मैं आपको step-by-step guide देता हूँ...`;
+        }
+
+        // Default intelligent response
+        const smartResponses = [
+            `"${userMessage}" - इसके बारे में मेरे पास comprehensive information है। क्या आप specific details चाहते हैं?`,
+
+            `Interesting question! "${userMessage}" के बारे में मैं आपको accurate और up-to-date information provide कर सकता हूँ।`,
+
+            `Great topic! "${userMessage}" पर मेरे पास extensive knowledge base है। कहाँ से start करें?`,
+
+            `I understand you're asking about "${userMessage}". Let me provide you with the most relevant and current information available.`,
+
+            `आपका सवाल बहुत अच्छा है! "${userMessage}" के बारे में मैं detailed explanation दे सकता हूँ।`
+        ];
+
+        return smartResponses[Math.floor(Math.random() * smartResponses.length)];
+    }
+
+    addMessage(text, sender) {
+        const chatMessages = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+        
+        messageDiv.className = `message ${sender}-message`;
+        messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+        
+        chatMessages.appendChild(messageDiv);
+        this.scrollToBottom();
+    }
+
+    showTyping() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = 'flex';
+        this.scrollToBottom();
+    }
+
+    hideTyping() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = 'none';
+    }
+
+    scrollToBottom() {
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    saveToHistory(userMessage, botResponse) {
+        this.conversationHistory.push(
+            { type: 'user', content: userMessage, time: new Date() },
+            { type: 'bot', content: botResponse, time: new Date() }
+        );
+        
+        // Keep only last 50 messages
+        if (this.conversationHistory.length > 50) {
+            this.conversationHistory = this.conversationHistory.slice(-50);
+        }
+        
+        this.updateChatHistoryUI();
+    }
+
+    updateChatHistoryUI() {
+        const chatHistory = document.getElementById('chat-history');
+        // Implementation for chat history sidebar
+    }
+
+    loadConversationHistory() {
+        // Load from localStorage if needed
+        const saved = localStorage.getItem('ultraAI_conversation');
+        if (saved) {
+            this.conversationHistory = JSON.parse(saved);
         }
     }
 
-    // Greetings - सीधे जवाब
-    if (lowerMessage.includes('hi') || lowerMessage.includes('hello') || lowerMessage.includes('namaste') || lowerMessage.includes('hey')) {
-        const greetings = [
-            `हाय! कैसे हो? मैं तुम्हारी क्या मदद कर सकता हूँ? 😊`,
-            `नमस्ते! तुम सुनाओ, कैसे हो? क्या चल रहा है?`,
-            `हेय! तुम्हारा दिन कैसा चल रहा है? कुछ बात करोगे?`,
-            `हैलो! मैं तैयार हूँ बातचीत के लिए। क्या हाल है?`
-        ];
-        return greetings[Math.floor(Math.random() * greetings.length)];
+    setupVoiceRecognition() {
+        // Voice recognition setup would go here
+        console.log('Voice recognition ready to be implemented');
     }
 
-    // How are you
-    if (lowerMessage.includes('kaise ho') || lowerMessage.includes('how are you') || lowerMessage.includes('kya haal hai')) {
-        const responses = [
-            `मैं तो बढ़िया हूँ भाई! तुम सुनाओ, कैसे हो? आज का दिन कैसा चल रहा है?`,
-            `बस यूँ ही चल रहा हूँ! तुम्हारे सवालों के जवाब देने में। तुम कैसे हो?`,
-            `मस्त हूँ! तुम्हारे साथ बात करके अच्छा लग रहा है। तुम बताओ कैसे हो?`
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
+    toggleVoice() {
+        this.isVoiceActive = !this.isVoiceActive;
+        alert(this.isVoiceActive ? 'Voice activation started!' : 'Voice activation stopped!');
     }
 
-    // Name questions
-    if (lowerMessage.includes('tumhara naam') || lowerMessage.includes('your name') || lowerMessage.includes('kaun ho')) {
-        return `मैं एक Smart AI Assistant हूँ! लेकिन तुम मुझे कोई भी नाम दे सकते हो। तुम्हारा क्या नाम है?`;
+    handleFileUpload(files) {
+        if (files.length > 0) {
+            const file = files[0];
+            this.addMessage(`📁 File uploaded: ${file.name}`, 'user');
+            
+            // Simulate file processing
+            setTimeout(() => {
+                this.addMessage(`✅ I've analyzed "${file.name}". What would you like to know about this file?`, 'bot');
+            }, 1500);
+        }
     }
-
-    // Weather
-    if (lowerMessage.includes('weather') || lowerMessage.includes('mausam')) {
-        return `🌤️ **आज का मौसम**\n\nदिल्ली: 28°C, हल्की धूप\nमुंबई: 32°C, नमी\nबैंगलोर: 26°C, सुहावना\n\nकिस शहर का मौसम जानना चाहते हो?`;
-    }
-
-    // News
-    if (lowerMessage.includes('news') || lowerMessage.includes('khabar')) {
-        return `📰 **आज की ताजा खबरें**\n\n• Technology में नए innovation\n• Sports में रोमांचक मैच\n• Business updates\n• Entertainment news\n\nकिस topic की खबर चाहिए?`;
-    }
-
-    // Cricket
-    if (lowerMessage.includes('cricket') || lowerMessage.includes('score')) {
-        return `🏏 **Live Cricket Scores**\n\nIND vs AUS: India 285/5 (50 overs)\nPAK vs ENG: Match starting soon\n\nकौन सा match देखना चाहते हो?`;
-    }
-
-    // Numbers - सीधे जवाब
-    if (/^\d+$/.test(userMessage.trim())) {
-        const number = parseInt(userMessage.trim());
-        return `तुमने नंबर ${number} लिखा है! 😄 क्या इस नंबर के बारे में कुछ और जानना चाहते हो?`;
-    }
-
-    // Simple questions - सीधे जवाब
-    if (lowerMessage.includes('kyu') || lowerMessage.includes('why')) {
-        return `अच्छा सवाल है! तुम "क्यों" पूछ रहे हो? मैं तुम्हें detailed explanation दे सकता हूँ।`;
-    }
-
-    if (lowerMessage.includes('kaise') || lowerMessage.includes('how')) {
-        return `तुम्हें "कैसे" जानना है? मैं step-by-step समझा सकता हूँ!`;
-    }
-
-    if (lowerMessage.includes('kya') || lowerMessage.includes('what')) {
-        return `तुम "क्या" पूछ रहे हो? मैं clear जवाब दूंगा!`;
-    }
-
-    // Personal touch if name is known
-    if (userName) {
-        const personalResponses = [
-            `${userName}, तुमने पूछा: "${userMessage}" - यह तो बहुत interesting topic है!`,
-            `अच्छा सवाल पूछा ${userName}! इसके बारे में बात करते हैं।`,
-            `वाह ${userName}! तुम्हारा सवाल अच्छा है। इसके बारे में क्या जानना चाहते हो?`
-        ];
-        return personalResponses[Math.floor(Math.random() * personalResponses.length)];
-    }
-
-    // Default human-like responses - NO MORE SEARCH RESULTS!
-    const humanResponses = [
-        `अच्छा सवाल है! 😊 इसके बारे में तुम क्या जानना चाहते हो?`,
-
-        `वाह! तुमने interesting topic उठाया है। इसके बारे में बात करके मजा आएगा! 🤔`,
-
-        `हाँ हाँ! "${userMessage}" - इसके बारे में मेरे पास अच्छी जानकारी है।`,
-
-        `तुम्हारा सवाल अच्छा लगा! 😄 इस topic पर हम बात कर सकते हैं।`,
-
-        `समझ गया! तुम "${userMessage}" के बारे में जानना चाहते हो। मैं तुम्हें simple और clear जवाब दूंगा।`,
-
-        `ओह! तुमने "${userMessage}" के बारे में पूछा। इसके बारे में काफी कुछ बताया जा सकता है!`,
-
-        `अच्छा लगा तुम्हारा सवाल! 😊 चलो इसके बारे में बात करते हैं।`
-    ];
-
-    return humanResponses[Math.floor(Math.random() * humanResponses.length)];
 }
 
-// Show Searching Indicator
-function showSearching() {
-    typingIndicator.style.display = 'block';
-    typingIndicator.classList.add('searching');
-    searchStatus.style.display = 'block';
-    scrollToBottom();
-}
-
-// Hide Searching Indicator
-function hideSearching() {
-    typingIndicator.style.display = 'none';
-    typingIndicator.classList.remove('searching');
-    searchStatus.style.display = 'none';
-}
-
-// Add Message to Chat
-function addMessage(text, sender) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}-message`;
-    
-    // Format message with line breaks
-    const formattedText = text.replace(/\n/g, '<br>');
-    messageDiv.innerHTML = formattedText;
-    
-    chatMessages.appendChild(messageDiv);
-    scrollToBottom();
-}
-
-// Scroll to Bottom
-function scrollToBottom() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Event Listeners
-sendBtn.addEventListener('click', sendMessage);
-chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        sendMessage();
+// Global functions
+function newChat() {
+    if (confirm('क्या आप नया चैट शुरू करना चाहते हैं?')) {
+        window.location.reload();
     }
+}
+
+function toggleVoice() {
+    if (window.ultraAI) {
+        window.ultraAI.toggleVoice();
+    }
+}
+
+function handleFileUpload(files) {
+    if (window.ultraAI) {
+        window.ultraAI.handleFileUpload(files);
+    }
+}
+
+function sendMessage() {
+    if (window.ultraAI) {
+        window.ultraAI.sendMessage();
+    }
+}
+
+// Initialize ULTRA AI when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.ultraAI = new UltraAI();
 });
-
-// Initialize - Focus on input
-window.addEventListener('load', () => {
-    chatInput.focus();
-});
-
-// NO WELCOME MESSAGE - Clean Start
