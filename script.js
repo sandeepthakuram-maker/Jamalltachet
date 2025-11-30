@@ -5,8 +5,9 @@ const sendBtn = document.getElementById('send-btn');
 const typingIndicator = document.getElementById('typing');
 const searchStatus = document.getElementById('search-status');
 
-// Conversation Memory
+// Conversation Memory - बातचीत याद रखेगा
 let conversationHistory = [];
+let userName = '';
 
 // Send Message Function
 async function sendMessage() {
@@ -18,27 +19,120 @@ async function sendMessage() {
     chatInput.value = '';
 
     // Save to history
-    conversationHistory.push({ type: 'user', content: message });
+    conversationHistory.push({ type: 'user', content: message, time: new Date() });
 
     // Show searching indicator
     showSearching();
 
-    // Get AI response with live search
-    try {
-        const response = await getAIResponseWithSearch(message);
+    // Get AI response
+    setTimeout(() => {
+        hideSearching();
+        const response = generateHumanResponse(message);
         addMessage(response, 'bot');
-        conversationHistory.push({ type: 'bot', content: response });
-    } catch (error) {
-        addMessage('Sorry, search failed. Please try again.', 'bot');
+        conversationHistory.push({ type: 'bot', content: response, time: new Date() });
+    }, 1500);
+}
+
+// Human-like Response Generator
+function generateHumanResponse(userMessage) {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // Extract name if provided
+    if ((lowerMessage.includes('mera naam') || lowerMessage.includes('my name is')) && !userName) {
+        const nameMatch = userMessage.match(/(mera naam|my name is)\s+([a-zA-Zअ-ज़]+)/i);
+        if (nameMatch) {
+            userName = nameMatch[2];
+            return `बहुत खूब ${userName}! 😊 तुम्हारा नाम सुनकर अच्छा लगा। मैं तुम्हारी क्या मदद कर सकता हूँ?`;
+        }
     }
 
-    // Hide searching indicator
-    hideSearching();
+    // Greetings - सीधे जवाब
+    if (lowerMessage.includes('hi') || lowerMessage.includes('hello') || lowerMessage.includes('namaste') || lowerMessage.includes('hey')) {
+        const greetings = [
+            `हाय! कैसे हो? मैं तुम्हारी क्या मदद कर सकता हूँ? 😊`,
+            `नमस्ते! तुम सुनाओ, कैसे हो? क्या चल रहा है?`,
+            `हेय! तुम्हारा दिन कैसा चल रहा है? कुछ बात करोगे?`,
+            `हैलो! मैं तैयार हूँ बातचीत के लिए। क्या हाल है?`
+        ];
+        return greetings[Math.floor(Math.random() * greetings.length)];
+    }
+
+    // How are you - इंसानों जैसे जवाब
+    if (lowerMessage.includes('kaise ho') || lowerMessage.includes('how are you') || lowerMessage.includes('kya haal hai')) {
+        const responses = [
+            `मैं तो बढ़िया हूँ भाई! तुम सुनाओ, कैसे हो? आज का दिन कैसा चल रहा है?`,
+            `बस यूँ ही चल रहा हूँ! तुम्हारे सवालों के जवाब देने में। तुम कैसे हो?`,
+            `मस्त हूँ! तुम्हारे साथ बात करके अच्छा लग रहा है। तुम बताओ कैसे हो?`
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    // Name questions
+    if (lowerMessage.includes('tumhara naam') || lowerMessage.includes('your name') || lowerMessage.includes('kaun ho')) {
+        return `मैं एक Smart AI Assistant हूँ! लेकिन तुम मुझे कोई भी नाम दे सकते हो। तुम्हारा क्या नाम है?`;
+    }
+
+    // Human-like conversation for personal questions
+    if (lowerMessage.includes('tum es trike se bat kr skte hoo') || lowerMessage.includes('human ki tarah bat karo')) {
+        return `हाँ बिल्कुल! मैं तुम्हारे जैसे ही बात कर सकता हूँ। 😄\n\nतुम जैसे बोलोगे, मैं वैसे ही जवाब दूंगा। कोई formal बातचीत नहीं - बिल्कुल दोस्तों जैसी बातचीत!`;
+    }
+
+    // Weather related
+    if (lowerMessage.includes('weather') || lowerMessage.includes('mausam')) {
+        return `🌤️ **आज का मौसम**\n\nदिल्ली: 28°C, हल्की धूप\nमुंबई: 32°C, नमी\nबैंगलोर: 26°C, सुहावना\n\nकिस शहर का मौसम जानना चाहते हो?`;
+    }
+
+    // News
+    if (lowerMessage.includes('news') || lowerMessage.includes('khabar')) {
+        return `📰 **आज की ताजा खबरें**\n\n• Technology में नए innovation\n• Sports में रोमांचक मैच\n• Business updates\n• Entertainment news\n\nकिस topic की खबर चाहिए?`;
+    }
+
+    // Context aware responses - पिछली बातचीत याद रखेगा
+    const lastUserMessage = conversationHistory
+        .filter(msg => msg.type === 'user')
+        .slice(-2, -1)[0];
+
+    if (lastUserMessage) {
+        if (lowerMessage.includes('uske bare mein') || lowerMessage.includes('about that')) {
+            return `हाँ हाँ! तुमने पिछली बार "${lastUserMessage.content}" के बारे में पूछा था। उसी topic पर और बात करते हैं?`;
+        }
+    }
+
+    // Personal touch if name is known
+    if (userName) {
+        const personalResponses = [
+            `${userName}, तुमने पूछा: "${userMessage}" - यह तो बहुत interesting topic है! इसके बारे में क्या जानना चाहते हो?`,
+            `अच्छा सवाल पूछा ${userName}! इसके बारे में मैं तुम्हें अच्छी जानकारी दे सकता हूँ।`,
+            `वाह ${userName}! तुम्हारा सवाल अच्छा है। इसके बारे में बात करते हैं!`
+        ];
+        
+        if (lowerMessage.includes('kyu') || lowerMessage.includes('why') || lowerMessage.includes('kaise')) {
+            return `${userName}, तुम "क्यों" पूछ रहे हो? समझ गया! मैं तुम्हें detailed explanation दूंगा।`;
+        }
+        
+        return personalResponses[Math.floor(Math.random() * personalResponses.length)];
+    }
+
+    // Default human-like responses
+    const humanResponses = [
+        `अच्छा सवाल है! 😊 इसके बारे में तुम क्या जानना चाहते हो? मैं तुम्हें अच्छे से समझा सकता हूँ।`,
+
+        `वाह! तुमने interesting topic उठाया है। इसके बारे में बात करके मजा आएगा! 🤔`,
+
+        `हाँ हाँ! "${userMessage}" - इसके बारे में मेरे पास अच्छी जानकारी है। तुम्हें किस aspect में interest है?`,
+
+        `तुम्हारा सवाल अच्छा लगा! 😄 इस topic पर हम घंटों बात कर सकते हैं। कहाँ से शुरू करें?`,
+
+        `समझ गया! तुम "${userMessage}" के बारे में जानना चाहते हो। मैं तुम्हें simple और clear जवाब दूंगा।`
+    ];
+
+    return humanResponses[Math.floor(Math.random() * humanResponses.length)];
 }
 
 // Show Searching Indicator
 function showSearching() {
     typingIndicator.style.display = 'block';
+    typingIndicator.classList.add('searching');
     searchStatus.style.display = 'block';
     scrollToBottom();
 }
@@ -46,118 +140,14 @@ function showSearching() {
 // Hide Searching Indicator
 function hideSearching() {
     typingIndicator.style.display = 'none';
+    typingIndicator.classList.remove('searching');
     searchStatus.style.display = 'none';
-}
-
-// AI Response with Live Search
-async function getAIResponseWithSearch(question) {
-    // Simulate different types of searches based on question
-    const lowerQuestion = question.toLowerCase();
-    
-    // Weather related
-    if (lowerQuestion.includes('weather') || lowerQuestion.includes('mausam')) {
-        return await simulateWeatherSearch(question);
-    }
-    
-    // News related
-    if (lowerQuestion.includes('news') || lowerQuestion.includes('khabar')) {
-        return await simulateNewsSearch();
-    }
-    
-    // Cricket scores
-    if (lowerQuestion.includes('cricket') || lowerQuestion.includes('score')) {
-        return await simulateCricketSearch();
-    }
-    
-    // Stock market
-    if (lowerQuestion.includes('stock') || lowerQuestion.includes('share')) {
-        return await simulateStockSearch();
-    }
-    
-    // General knowledge - simulate Wikipedia search
-    return await simulateWikipediaSearch(question);
-}
-
-// Simulate Weather Search
-async function simulateWeatherSearch(location) {
-    const cities = {
-        'delhi': { temp: '28°C', condition: 'Sunny', humidity: '45%' },
-        'mumbai': { temp: '32°C', condition: 'Humid', humidity: '75%' },
-        'kolkata': { temp: '30°C', condition: 'Cloudy', humidity: '68%' },
-        'chennai': { temp: '34°C', condition: 'Hot', humidity: '70%' },
-        'bangalore': { temp: '26°C', condition: 'Pleasant', humidity: '55%' }
-    };
-    
-    const city = Object.keys(cities).find(city => location.toLowerCase().includes(city));
-    const weather = cities[city] || { temp: '27°C', condition: 'Clear', humidity: '50%' };
-    
-    return `🌤️ **Live Weather Update**\n\n📍 ${city ? city.toUpperCase() : 'Your Location'}\n🌡️ Temperature: ${weather.temp}\n☁️ Condition: ${weather.condition}\n💧 Humidity: ${weather.humidity}\n\n*Real-time weather data*`;
-}
-
-// Simulate News Search
-async function simulateNewsSearch() {
-    const newsItems = [
-        "📰 Technology: AI makes new breakthrough in healthcare",
-        "🏏 Sports: India wins thrilling match against Australia", 
-        "💰 Business: Stock market reaches all-time high",
-        "🌍 World: Climate summit concludes with new agreements",
-        "🔬 Science: NASA discovers new exoplanet"
-    ];
-    
-    return `📡 **Live News Updates**\n\n${newsItems.join('\n\n')}\n\n*Updated: ${new Date().toLocaleTimeString()}*`;
-}
-
-// Simulate Cricket Search  
-async function simulateCricketSearch() {
-    const matches = [
-        "🏏 IND vs AUS: India 285/5 (50 overs) - Kohli 102*, Rahul 67",
-        "🏏 PAK vs ENG: Pakistan 234/8 (50 overs) - Babar 89",
-        "🏏 NZ vs SA: New Zealand 301/6 (50 overs) - Williamson 115"
-    ];
-    
-    return `🎯 **Live Cricket Scores**\n\n${matches.join('\n\n')}\n\n*Live updates from international matches*`;
-}
-
-// Simulate Stock Search
-async function simulateStockSearch() {
-    const stocks = {
-        'Sensex': '72,450 (+1.5%)',
-        'Nifty': '21,890 (+1.3%)', 
-        'Reliance': '2,845 (+2.1%)',
-        'TCS': '3,782 (+0.8%)',
-        'Infosys': '1,645 (+1.2%)'
-    };
-    
-    let stockText = '📈 **Live Stock Market**\n\n';
-    for (const [stock, value] of Object.entries(stocks)) {
-        stockText += `• ${stock}: ${value}\n`;
-    }
-    stockText += `\n*As of ${new Date().toLocaleTimeString()}*`;
-    
-    return stockText;
-}
-
-// Simulate Wikipedia Search
-async function simulateWikipediaSearch(query) {
-    const knowledge = {
-        'prime minister': 'Narendra Modi is the current Prime Minister of India (as of 2024).',
-        'capital of india': 'New Delhi is the capital of India.',
-        'population of india': 'India population is approximately 1.4 billion people.',
-        'taj mahal': 'The Taj Mahal is located in Agra, built by Shah Jahan.',
-        'machine learning': 'Machine learning is a subset of artificial intelligence.',
-        'artificial intelligence': 'AI is the simulation of human intelligence in machines.'
-    };
-    
-    const answer = knowledge[query.toLowerCase()] 
-        || `🔍 **Internet Search Result for: "${query}"**\n\nI found comprehensive information about this topic. According to latest data, this subject has significant relevance in current context. Would you like more specific details?`;
-    
-    return answer;
 }
 
 // Add Message to Chat
 function addMessage(text, sender) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}-message ${sender === 'bot' ? 'live-data' : ''}`;
+    messageDiv.className = `message ${sender}-message`;
     
     // Format message with line breaks
     const formattedText = text.replace(/\n/g, '<br>');
@@ -180,5 +170,10 @@ chatInput.addEventListener('keypress', (e) => {
     }
 });
 
-// Initialize
+// Initialize - Focus on input
 chatInput.focus();
+
+// Welcome message after load
+setTimeout(() => {
+    addMessage('तुम जैसे बोलोगे, मैं वैसे ही जवाब दूंगा! कोई formal बातचीत नहीं - बिल्कुल दोस्तों जैसी बातचीत! 😄', 'bot');
+}, 2000);
